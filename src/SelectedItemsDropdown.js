@@ -3,6 +3,7 @@ import List, { ListItem, ListItemText, ListItemIcon } from 'material-ui/List'
 import Downshift from 'downshift'
 import { AddCircle, Close } from 'material-ui-icons'
 import IconButton from 'material-ui/IconButton'
+import PropTypes from 'prop-types'
 
 const removeAllItem = {
   id: -1,
@@ -30,15 +31,13 @@ class SelectedItemsDropdown extends Component {
     this.props.onRemoveAllItems()
   }
 
-  openList = () => {
+  toggleList = () => {
     this.setState(state => ({
       isMenuOpen: !state.isMenuOpen
     }))
   }
 
   handleKeyDown = ({ key }) => {
-    console.log('key down', key)
-
     const { isMenuOpen } = this.state
     if (key === 'ArrowDown' && !isMenuOpen) {
       this.setState({
@@ -56,8 +55,11 @@ class SelectedItemsDropdown extends Component {
 
   render() {
     const { isMenuOpen } = this.state
-    const { classes, selected } = this.props
+    const { classes, selected, disabled } = this.props
     const selectedWithItems = [removeAllItem, ...selected]
+
+    const isOpen = !disabled && isMenuOpen
+
     return (
       <Downshift
         onChange={this.onRemoveSelected}
@@ -65,31 +67,28 @@ class SelectedItemsDropdown extends Component {
         selectedItem=""
         itemToString={() => ''}
         isOpen={isMenuOpen}
-        onOuterClick={this.openList}
+        onOuterClick={this.toggleList}
       >
         {({ getItemProps, getButtonProps, highlightedIndex }) => {
           return (
             <span onKeyDown={this.handleKeyDown}>
-              <IconButton {...getButtonProps({ onClick: this.openList })}>
+              <IconButton {...getButtonProps({ onClick: this.toggleList, disabled})}>
                 <AddCircle />
               </IconButton>
-              {!isMenuOpen ? null : (
+              {!isOpen ? null : (
                 <List classes={{ root: classes.selectedList }}>
                   {selectedWithItems.map((item, index) => {
                     return (
                       <ListItem
                         divider
-                        button
-                        {...getItemProps({ item, key: item.id })}
+                        {...getItemProps({ item, key: item.id, classes: {
+                          root: highlightedIndex === index
+                                ? classes.selectedItem
+                                : ''
+                        } })}
                       >
                         <ListItemText
                           primary={item.name}
-                          classes={{
-                            text:
-                              highlightedIndex === index
-                                ? classes.selectedItem
-                                : ''
-                          }}
                         />
                         <ListItemIcon>
                           <Close
@@ -110,5 +109,17 @@ class SelectedItemsDropdown extends Component {
   }
 }
 
+SelectedItemsDropdown.propTypes = {
+  classes: PropTypes.object,
+  selected: PropTypes.array.isRequired,
+  onRemoveAllItems: PropTypes.func.isRequired,
+  onRemoveItem: PropTypes.func.isRequired,
+  disabled: PropTypes.bool
+}
+
+SelectedItemsDropdown.defaultProps = {
+  classes: {},
+  
+}
 
 export default SelectedItemsDropdown

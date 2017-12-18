@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import TextField from 'material-ui/TextField'
-import List, { ListItem, ListItemText, ListItemIcon } from 'material-ui/List'
+import List, { ListItem, ListItemText } from 'material-ui/List'
 import Downshift from 'downshift'
 import { withStyles } from 'material-ui/styles'
-import { AddCircle, Close } from 'material-ui-icons'
-import IconButton from 'material-ui/IconButton'
+import SelectedItemsDropdown from './SelectedItemsDropdown'
 
 const items = [
   { id: 1, name: 'Bananas' },
@@ -38,114 +37,8 @@ const styles = {
     display: 'absolute'
   },
   selectedItem: {
-    fontWeight: 600
-  }
-}
-
-const removeAllItem = {
-  id: -1,
-  name: 'Remove All Items'
-}
-
-class SelectedItemsDropdown extends Component {
-  constructor() {
-    super()
-
-    this.state = {
-      isMenuOpen: false
-    }
-  }
-
-  onRemoveSelected = itemToRemove => {
-    if (itemToRemove.id === -1) {
-      this.props.onRemoveAllItems()
-    } else {
-      this.props.onRemoveItem(itemToRemove)
-    }
-  }
-
-  onRemoveAllItems = () => {
-    this.props.onRemoveAllItems()
-  }
-
-  openList = () => {
-    this.setState(state => ({
-      isMenuOpen: !state.isMenuOpen
-    }))
-  }
-
-  handleKeyDown = ({ key }) => {
-    console.log('key down', key)
-
-    const { isMenuOpen } = this.state
-    if (key === 'ArrowDown' && !isMenuOpen) {
-      this.setState({
-        isMenuOpen: true
-      })
-      return
-    }
-
-    if (key === 'Escape' && isMenuOpen) {
-      this.setState({
-        isMenuOpen: false
-      })
-    }
-  }
-
-  render() {
-    const { isMenuOpen } = this.state
-    const { classes, selected } = this.props
-    const selectedWithItems = [removeAllItem, ...selected]
-    return (
-      <Downshift
-        onChange={this.onRemoveSelected}
-        onStateChange={this.onStateChange}
-        selectedItem=""
-        itemToString={() => ''}
-        isOpen={isMenuOpen}
-        onOuterClick={this.openList}
-      >
-        {({ getItemProps, getButtonProps, highlightedIndex }) => {
-          return (
-            <span onKeyDown={this.handleKeyDown}>
-              <IconButton {...getButtonProps({ onClick: this.openList })}>
-                <AddCircle />
-              </IconButton>
-              {!isMenuOpen ? null : (
-                <List classes={{ root: classes.selectedList }}>
-                  {selectedWithItems.map((item, index) => {
-                    return (
-                      <ListItem
-                        divider
-                        button
-                        {...getItemProps({ item, key: item.id })}
-                      >
-                        <ListItemText
-                          primary={item.name}
-                          classes={{
-                            text:
-                              highlightedIndex === index
-                                ? classes.selectedItem
-                                : ''
-                          }}
-                        />
-                        <ListItemIcon>
-                          <Close
-                            onClick={() => this.onRemoveSelected(item)}
-                            key={item.id}
-                          />
-                        </ListItemIcon>
-                      </ListItem>
-                    )
-                  })}
-                </List>
-              )}
-            </span>
-          )
-        }}
-      </Downshift>
-    )
-  }
+    backgroundColor: 'gray',
+  },
 }
 
 class MultiselectTypeahead extends Component {
@@ -186,6 +79,10 @@ class MultiselectTypeahead extends Component {
     this.setState({
       selected: newSelected,
       isMenuOpen: newSelected.length > 0
+    }, state => {
+      if(this.state.selected.length === 0){
+        this.input.focus()
+      }
     })
   }
 
@@ -193,6 +90,8 @@ class MultiselectTypeahead extends Component {
     this.setState({
       selected: [],
       isMenuOpen: false
+    }, () => {
+      this.input.focus()
     })
   }
 
@@ -237,15 +136,15 @@ class MultiselectTypeahead extends Component {
                     }
                   })}
                 />
-                {hasSelected ? (
+                
                   <SelectedItemsDropdown
                     selected={selected}
                     isMenuOpen={isMenuOpen}
                     onRemoveAllItems={this.onRemoveAllSelected}
                     onRemoveItem={this.onRemoveSelected}
                     classes={classes}
+                    disabled={!hasSelected}
                   />
-                ) : null}
               </div>
               <div className={classes.listContainer}>
                 {!isOpen ? null : (
@@ -263,18 +162,15 @@ class MultiselectTypeahead extends Component {
 
                         return (
                           <ListItem
-                            button
                             divider
-                            {...getItemProps({ item, key: item.id })}
+                            {...getItemProps({ item, key: item.id, classes: {
+                              root: isSelected || index === highlightedIndex
+                                    ? classes.selectedItem
+                                    : ''
+                            } })}
                           >
                             <ListItemText
                               primary={item.name}
-                              classes={{
-                                text:
-                                  isSelected || index === highlightedIndex
-                                    ? classes.selectedItem
-                                    : ''
-                              }}
                             />
                           </ListItem>
                         )
