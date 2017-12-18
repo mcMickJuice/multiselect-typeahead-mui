@@ -5,9 +5,6 @@ import Downshift from 'downshift'
 import { withStyles } from 'material-ui/styles'
 import { AddCircle, Close } from 'material-ui-icons'
 import IconButton from 'material-ui/IconButton'
-//show badge of number selected
-//allow typing in input
-//allow multiselect
 
 const items = [
   { id: 1, name: 'Bananas' },
@@ -78,7 +75,17 @@ class SelectedItemsDropdown extends Component {
   }
 
   handleKeyDown = ({ key }) => {
-    if (key === 'Escape') {
+    console.log('key down', key)
+
+    const { isMenuOpen } = this.state
+    if (key === 'ArrowDown' && !isMenuOpen) {
+      this.setState({
+        isMenuOpen: true
+      })
+      return
+    }
+
+    if (key === 'Escape' && isMenuOpen) {
       this.setState({
         isMenuOpen: false
       })
@@ -162,9 +169,14 @@ class MultiselectTypeahead extends Component {
       newSelected = [...selected, e]
     }
 
-    this.setState({
-      selected: newSelected
-    })
+    this.setState(
+      {
+        selected: newSelected
+      },
+      () => {
+        this.input.focus()
+      }
+    )
   }
 
   onRemoveSelected = itemToRemove => {
@@ -201,6 +213,7 @@ class MultiselectTypeahead extends Component {
         onStateChange={this.onStateChange}
         itemToString={itemToString}
         selectedItem={this.turnOffSelected}
+        defaultHighlightedIndex={0}
       >
         {({
           getInputProps,
@@ -214,6 +227,7 @@ class MultiselectTypeahead extends Component {
             <div className={classes.root}>
               <div className={classes.inputContainer}>
                 <TextField
+                  inputRef={input => (this.input = input)}
                   {...getInputProps({
                     placeholder: `${selected.length} Items Selected`,
                     InputProps: {
