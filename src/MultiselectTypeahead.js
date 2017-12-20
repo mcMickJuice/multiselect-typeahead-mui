@@ -116,7 +116,7 @@ class MultiselectTypeahead extends Component {
   };
 
   render() {
-    const { classes, items, ItemRenderer, filter } = this.props;
+    const { classes, items, ItemRenderer, filter, displayField } = this.props;
     const { selected, isMenuOpen } = this.state;
     const hasSelected = selected.length > 0;
 
@@ -153,6 +153,7 @@ class MultiselectTypeahead extends Component {
 
                 <SelectedItemsDropdown
                   selected={selected}
+                  displayField={displayField}
                   isMenuOpen={isMenuOpen}
                   onRemoveAllItems={this.onRemoveAllSelected}
                   onRemoveItem={this.onRemoveSelected}
@@ -195,7 +196,8 @@ class MultiselectTypeahead extends Component {
 MultiselectTypeahead.propTypes = {
   items: PropTypes.array.isRequired,
   ItemRenderer: PropTypes.func,
-  filter: PropTypes.func.isRequired
+  filter: PropTypes.func.isRequired,
+  displayField: PropTypes.string.isRequired
 };
 
 MultiselectTypeahead.defaultProps = {

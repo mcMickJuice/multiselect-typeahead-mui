@@ -46,7 +46,7 @@ const items = [
 
 const ItemRenderer = ({ item, isSelected, isHighlighted, ...rest }) => {
   return (
-    <ListItem divider button {...rest}>
+    <ListItem divider {...rest}>
       <Avatar src={item.imageUrl} />
       <ListItemText primary={item.fruit} />
       {(isSelected || isHighlighted) && (
@@ -71,6 +71,7 @@ class FruitTypeahead extends Component {
           filter={fruitFilter}
           items={items}
           ItemRenderer={ItemRenderer}
+          displayField="fruit"
         />
       </div>
     );

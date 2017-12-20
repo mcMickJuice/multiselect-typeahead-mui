@@ -20,19 +20,33 @@ class SelectedItemsDropdown extends Component {
     };
   }
 
-  onRemoveSelected = itemToRemove => {
-    if (itemToRemove.id === -1) {
-      this.props.onRemoveAllItems();
+  removeSelected = itemToRemove => {
+    if (itemToRemove.id === -1 || this.props.selected.length === 1) {
+      this.removeAllItems();
     } else {
       this.props.onRemoveItem(itemToRemove);
     }
   };
 
-  onRemoveAllItems = () => {
-    this.props.onRemoveAllItems();
+  removeAllItems = () => {
+    this.setState(
+      {
+        isMenuOpen: false
+      },
+      () => {
+        this.props.onRemoveAllItems();
+      }
+    );
+  };
+
+  closeList = () => {
+    this.setState({
+      isMenuOpen: false
+    });
   };
 
   toggleList = () => {
+    console.log("toggle list");
     this.setState(state => ({
       isMenuOpen: !state.isMenuOpen
     }));
@@ -56,25 +70,28 @@ class SelectedItemsDropdown extends Component {
 
   render() {
     const { isMenuOpen } = this.state;
-    const { classes, selected, disabled } = this.props;
+    const { classes, selected, disabled, displayField } = this.props;
     const selectedWithItems = [removeAllItem, ...selected];
 
     const isOpen = !disabled && isMenuOpen;
 
     return (
       <Downshift
-        onChange={this.onRemoveSelected}
+        onChange={this.removeSelected}
         onStateChange={this.onStateChange}
         selectedItem=""
         itemToString={() => ""}
         isOpen={isMenuOpen}
-        onOuterClick={this.toggleList}
+        onOuterClick={this.closeList}
       >
         {({ getItemProps, getButtonProps, highlightedIndex }) => {
           return (
             <span onKeyDown={this.handleKeyDown}>
               <IconButton
-                {...getButtonProps({ onClick: this.toggleList, disabled })}
+                {...getButtonProps({
+                  onClick: this.toggleList,
+                  disabled
+                })}
               >
                 <AddCircle />
               </IconButton>
@@ -82,6 +99,8 @@ class SelectedItemsDropdown extends Component {
                 <DropdownList classes={{ root: classes.selectedList }}>
                   {selectedWithItems.map((item, index) => {
                     const isHighlighted = highlightedIndex === index;
+                    const displayName =
+                      item.id === -1 ? item.name : item[displayField];
                     return (
                       <ListItem
                         button
@@ -91,7 +110,7 @@ class SelectedItemsDropdown extends Component {
                           key: item.id
                         })}
                       >
-                        <ListItemText primary={item.name} />
+                        <ListItemText primary={displayName} />
                         {isHighlighted && (
                           <ListItemIcon>
                             <Close key={item.id} />
@@ -115,7 +134,8 @@ SelectedItemsDropdown.propTypes = {
   selected: PropTypes.array.isRequired,
   onRemoveAllItems: PropTypes.func.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  displayField: PropTypes.string.isRequired
 };
 
 SelectedItemsDropdown.defaultProps = {
