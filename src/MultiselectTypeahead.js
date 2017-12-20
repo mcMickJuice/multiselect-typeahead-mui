@@ -1,65 +1,68 @@
-import React, { Component } from 'react'
-import TextField from 'material-ui/TextField'
-import List, { ListItem, ListItemText } from 'material-ui/List'
-import Downshift from 'downshift'
-import { withStyles } from 'material-ui/styles'
-import SelectedItemsDropdown from './SelectedItemsDropdown'
+import React, { Component } from "react";
+import TextField from "material-ui/TextField";
+import Check from "material-ui-icons/Check";
+import Close from "material-ui-icons/Close";
+import List, { ListItem, ListItemText, ListItemIcon } from "material-ui/List";
+import Downshift from "downshift";
+import { withStyles } from "material-ui/styles";
+import SelectedItemsDropdown from "./SelectedItemsDropdown";
+import DropdownList from "./DropdownList";
 
 const items = [
-  { id: 1, name: 'Bananas' },
-  { id: 2, name: 'Apples' },
-  { id: 3, name: 'Plantains' },
-  { id: 4, name: 'Oranges' },
-  { id: 5, name: 'Coconuts' },
-  { id: 6, name: 'Zebra Mussels' }
-]
+  { id: 1, name: "Bananas" },
+  { id: 2, name: "Apples" },
+  { id: 3, name: "Plantains" },
+  { id: 4, name: "Oranges" },
+  { id: 5, name: "Coconuts" },
+  { id: 6, name: "Zebra Mussels" }
+];
 
-const itemToString = () => ''
+const itemToString = () => "";
 
 const styles = {
   inputContainer: {
-    position: 'relative',
-    display: 'inline-block'
+    position: "relative",
+    display: "inline-block"
   },
   listContainer: {
-    width: '300px'
+    width: "300px"
   },
   input: {
     paddingRight: `28px`
   },
   selectedToggle: {
-    position: 'absolute',
+    position: "absolute",
     zIndex: 1000,
     bottom: 0,
     right: 0
   },
   selectedList: {
-    display: 'absolute'
+    display: "absolute"
   },
   selectedItem: {
-    backgroundColor: 'gray',
-  },
-}
+    backgroundColor: "gray"
+  }
+};
 
 class MultiselectTypeahead extends Component {
   constructor() {
-    super()
+    super();
 
-    this.turnOffSelected = []
+    this.turnOffSelected = [];
 
     this.state = {
       selected: [],
       isMenuOpen: true
-    }
+    };
   }
 
   onChange = e => {
-    const { selected } = this.state
-    let newSelected
+    const { selected } = this.state;
+    let newSelected;
     if (selected.indexOf(e) > -1) {
-      newSelected = selected.filter(s => s.id !== e.id)
+      newSelected = selected.filter(s => s.id !== e.id);
     } else {
-      newSelected = [...selected, e]
+      newSelected = [...selected, e];
     }
 
     this.setState(
@@ -67,44 +70,50 @@ class MultiselectTypeahead extends Component {
         selected: newSelected
       },
       () => {
-        this.input.focus()
+        this.input.focus();
       }
-    )
-  }
+    );
+  };
 
   onRemoveSelected = itemToRemove => {
-    const { selected } = this.state
-    const newSelected = selected.filter(item => item.id !== itemToRemove.id)
+    const { selected } = this.state;
+    const newSelected = selected.filter(item => item.id !== itemToRemove.id);
 
-    this.setState({
-      selected: newSelected,
-      isMenuOpen: newSelected.length > 0
-    }, state => {
-      if(this.state.selected.length === 0){
-        this.input.focus()
+    this.setState(
+      {
+        selected: newSelected,
+        isMenuOpen: newSelected.length > 0
+      },
+      state => {
+        if (this.state.selected.length === 0) {
+          this.input.focus();
+        }
       }
-    })
-  }
+    );
+  };
 
   onRemoveAllSelected = () => {
-    this.setState({
-      selected: [],
-      isMenuOpen: false
-    }, () => {
-      this.input.focus()
-    })
-  }
+    this.setState(
+      {
+        selected: [],
+        isMenuOpen: false
+      },
+      () => {
+        this.input.focus();
+      }
+    );
+  };
 
   onMenuOpen = () => {
     this.setState(state => ({
       isMenuOpen: !state.isMenuOpen
-    }))
-  }
+    }));
+  };
 
   render() {
-    const { classes } = this.props
-    const { selected, isMenuOpen } = this.state
-    const hasSelected = selected.length > 0
+    const { classes } = this.props;
+    const { selected, isMenuOpen } = this.state;
+    const hasSelected = selected.length > 0;
 
     return (
       <Downshift
@@ -136,19 +145,19 @@ class MultiselectTypeahead extends Component {
                     }
                   })}
                 />
-                
-                  <SelectedItemsDropdown
-                    selected={selected}
-                    isMenuOpen={isMenuOpen}
-                    onRemoveAllItems={this.onRemoveAllSelected}
-                    onRemoveItem={this.onRemoveSelected}
-                    classes={classes}
-                    disabled={!hasSelected}
-                  />
+
+                <SelectedItemsDropdown
+                  selected={selected}
+                  isMenuOpen={isMenuOpen}
+                  onRemoveAllItems={this.onRemoveAllSelected}
+                  onRemoveItem={this.onRemoveSelected}
+                  classes={classes}
+                  disabled={!hasSelected}
+                />
               </div>
               <div className={classes.listContainer}>
                 {!isOpen ? null : (
-                  <List>
+                  <DropdownList>
                     {items
                       .filter(
                         i =>
@@ -158,32 +167,43 @@ class MultiselectTypeahead extends Component {
                       )
                       .map((item, index) => {
                         const isSelected =
-                          selected.map(s => s.id).indexOf(item.id) > -1
-
+                          selected.map(s => s.id).indexOf(item.id) > -1;
+                        const isHighlighted = index === highlightedIndex;
                         return (
                           <ListItem
                             divider
-                            {...getItemProps({ item, key: item.id, classes: {
-                              root: isSelected || index === highlightedIndex
-                                    ? classes.selectedItem
-                                    : ''
-                            } })}
+                            button
+                            {...getItemProps({
+                              item,
+                              key: item.id
+                            })}
                           >
-                            <ListItemText
-                              primary={item.name}
-                            />
+                            <ListItemText primary={item.name} />
+                            {(isSelected || isHighlighted) && (
+                              <ListItemIcon>
+                                {isSelected ? (
+                                  isHighlighted ? (
+                                    <Close />
+                                  ) : (
+                                    <Check />
+                                  )
+                                ) : (
+                                  <Check />
+                                )}
+                              </ListItemIcon>
+                            )}
                           </ListItem>
-                        )
+                        );
                       })}
-                  </List>
+                  </DropdownList>
                 )}
               </div>
             </div>
-          )
+          );
         }}
       </Downshift>
-    )
+    );
   }
 }
 
-export default withStyles(styles)(MultiselectTypeahead)
+export default withStyles(styles)(MultiselectTypeahead);
