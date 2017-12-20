@@ -2,20 +2,12 @@ import React, { Component } from "react";
 import TextField from "material-ui/TextField";
 import Check from "material-ui-icons/Check";
 import Close from "material-ui-icons/Close";
-import List, { ListItem, ListItemText, ListItemIcon } from "material-ui/List";
+import { ListItem, ListItemText, ListItemIcon } from "material-ui/List";
 import Downshift from "downshift";
 import { withStyles } from "material-ui/styles";
 import SelectedItemsDropdown from "./SelectedItemsDropdown";
 import DropdownList from "./DropdownList";
-
-const items = [
-  { id: 1, name: "Bananas" },
-  { id: 2, name: "Apples" },
-  { id: 3, name: "Plantains" },
-  { id: 4, name: "Oranges" },
-  { id: 5, name: "Coconuts" },
-  { id: 6, name: "Zebra Mussels" }
-];
+import PropTypes from "prop-types";
 
 const itemToString = () => "";
 
@@ -42,6 +34,19 @@ const styles = {
   selectedItem: {
     backgroundColor: "gray"
   }
+};
+
+const DefaultItemRenderer = ({ item, isSelected, isHighlighted, ...rest }) => {
+  return (
+    <ListItem divider button {...rest}>
+      <ListItemText primary={item.name} />
+      {(isSelected || isHighlighted) && (
+        <ListItemIcon>
+          {isSelected ? isHighlighted ? <Close /> : <Check /> : <Check />}
+        </ListItemIcon>
+      )}
+    </ListItem>
+  );
 };
 
 class MultiselectTypeahead extends Component {
@@ -111,7 +116,7 @@ class MultiselectTypeahead extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, items, ItemRenderer, filter } = this.props;
     const { selected, isMenuOpen } = this.state;
     const hasSelected = selected.length > 0;
 
@@ -159,40 +164,21 @@ class MultiselectTypeahead extends Component {
                 {!isOpen ? null : (
                   <DropdownList>
                     {items
-                      .filter(
-                        i =>
-                          i.name
-                            .toLowerCase()
-                            .indexOf(inputValue.toLowerCase()) > -1
-                      )
+                      .filter(item => filter(item, inputValue))
                       .map((item, index) => {
                         const isSelected =
                           selected.map(s => s.id).indexOf(item.id) > -1;
                         const isHighlighted = index === highlightedIndex;
                         return (
-                          <ListItem
-                            divider
-                            button
+                          <ItemRenderer
+                            item={item}
+                            isSelected={isSelected}
+                            isHighlighted={isHighlighted}
                             {...getItemProps({
                               item,
                               key: item.id
                             })}
-                          >
-                            <ListItemText primary={item.name} />
-                            {(isSelected || isHighlighted) && (
-                              <ListItemIcon>
-                                {isSelected ? (
-                                  isHighlighted ? (
-                                    <Close />
-                                  ) : (
-                                    <Check />
-                                  )
-                                ) : (
-                                  <Check />
-                                )}
-                              </ListItemIcon>
-                            )}
-                          </ListItem>
+                          />
                         );
                       })}
                   </DropdownList>
@@ -205,5 +191,15 @@ class MultiselectTypeahead extends Component {
     );
   }
 }
+
+MultiselectTypeahead.propTypes = {
+  items: PropTypes.array.isRequired,
+  ItemRenderer: PropTypes.func,
+  filter: PropTypes.func.isRequired
+};
+
+MultiselectTypeahead.defaultProps = {
+  ItemRenderer: DefaultItemRenderer
+};
 
 export default withStyles(styles)(MultiselectTypeahead);

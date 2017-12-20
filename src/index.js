@@ -1,12 +1,12 @@
 import React from "react";
 import { render } from "react-dom";
-import MultiselectTypeahead from "./MultiselectTypeahead";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { ListItem } from "material-ui/List";
 import DropdownList from "./DropdownList";
 import { createMuiTheme } from "material-ui/styles";
 import purple from "material-ui/colors/purple";
 import green from "material-ui/colors/green";
+import FruitTypeahead from "./FruitTypeahead";
 
 const theme = createMuiTheme({
   palette: {
@@ -22,8 +22,7 @@ const App = () => (
   <MuiThemeProvider theme={theme}>
     <div>
       <div>
-        <h3>MultiselectTypeahead</h3>
-        <MultiselectTypeahead />
+        <FruitTypeahead />
       </div>
       <div>
         <h3>Dropdown List</h3>
