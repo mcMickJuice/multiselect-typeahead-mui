@@ -123,7 +123,6 @@ class MultiselectTypeahead extends Component {
     return (
       <Downshift
         onChange={this.onChange}
-        onStateChange={this.onStateChange}
         itemToString={itemToString}
         selectedItem={this.turnOffSelected}
         defaultHighlightedIndex={0}

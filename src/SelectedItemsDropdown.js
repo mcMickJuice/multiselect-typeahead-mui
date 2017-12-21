@@ -77,12 +77,12 @@ class SelectedItemsDropdown extends Component {
 
     return (
       <Downshift
-        onChange={this.removeSelected}
-        onStateChange={this.onStateChange}
+        onChange={this.removeSelected} //maybe use onSelect instead
         selectedItem=""
         itemToString={() => ""}
         isOpen={isMenuOpen}
         onOuterClick={this.closeList}
+        defaultHighlightedIndex={0}
       >
         {({ getItemProps, getButtonProps, highlightedIndex }) => {
           return (
@@ -103,7 +103,6 @@ class SelectedItemsDropdown extends Component {
                       item.id === -1 ? item.name : item[displayField];
                     return (
                       <ListItem
-                        button
                         divider
                         {...getItemProps({
                           item,
