@@ -5,7 +5,6 @@ import Close from "material-ui-icons/Close";
 import { ListItem, ListItemText, ListItemIcon } from "material-ui/List";
 import Downshift from "downshift";
 import { withStyles } from "material-ui/styles";
-import SelectedItemsDropdown from "./SelectedItemsDropdown";
 import DropdownList from "./DropdownList";
 import PropTypes from "prop-types";
 
@@ -56,8 +55,7 @@ class MultiselectTypeahead extends Component {
     this.turnOffSelected = [];
 
     this.state = {
-      selected: [],
-      isMenuOpen: true
+      selected: []
     };
   }
 
@@ -84,17 +82,9 @@ class MultiselectTypeahead extends Component {
     const { selected } = this.state;
     const newSelected = selected.filter(item => item.id !== itemToRemove.id);
 
-    this.setState(
-      {
-        selected: newSelected,
-        isMenuOpen: newSelected.length > 0
-      },
-      state => {
-        if (this.state.selected.length === 0) {
-          this.input.focus();
-        }
-      }
-    );
+    this.setState({
+      selected: newSelected
+    });
   };
 
   onRemoveAllSelected = () => {
@@ -109,16 +99,9 @@ class MultiselectTypeahead extends Component {
     );
   };
 
-  onMenuOpen = () => {
-    this.setState(state => ({
-      isMenuOpen: !state.isMenuOpen
-    }));
-  };
-
   render() {
-    const { classes, items, ItemRenderer, filter, displayField } = this.props;
-    const { selected, isMenuOpen } = this.state;
-    const hasSelected = selected.length > 0;
+    const { classes, items, ItemRenderer, filter } = this.props;
+    const { selected } = this.state;
 
     return (
       <Downshift
@@ -148,16 +131,6 @@ class MultiselectTypeahead extends Component {
                       }
                     }
                   })}
-                />
-
-                <SelectedItemsDropdown
-                  selected={selected}
-                  displayField={displayField}
-                  isMenuOpen={isMenuOpen}
-                  onRemoveAllItems={this.onRemoveAllSelected}
-                  onRemoveItem={this.onRemoveSelected}
-                  classes={classes}
-                  disabled={!hasSelected}
                 />
               </div>
               <div className={classes.listContainer}>
