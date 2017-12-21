@@ -20,11 +20,11 @@ const theme = createMuiTheme({
 
 const App = () => (
   <MuiThemeProvider theme={theme}>
-    <div>
+    <div style={{ height: "1000px" }}>
       <div>
         <FruitTypeahead />
       </div>
-      <div>
+      {/* <div>
         <h3>Dropdown List</h3>
         <DropdownList>
           <ListItem button divider>
@@ -37,7 +37,7 @@ const App = () => (
             Hey there
           </ListItem>
         </DropdownList>
-      </div>
+      </div> */}
     </div>
   </MuiThemeProvider>
 );
