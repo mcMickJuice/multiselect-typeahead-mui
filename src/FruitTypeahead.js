@@ -13,6 +13,18 @@ const items = [
       "https://img.buzzfeed.com/buzzfeed-static/static/2015-03/6/14/enhanced/webdr06/enhanced-5904-1425669663-1.jpg?downsize=715:*&output-format=auto&output-quality=auto"
   },
   {
+    id: 11,
+    fruit: "Passion Fruit",
+    imageUrl:
+      "https://img.buzzfeed.com/buzzfeed-static/static/2015-03/6/14/enhanced/webdr06/enhanced-5904-1425669663-1.jpg?downsize=715:*&output-format=auto&output-quality=auto"
+  },
+  {
+    id: 12,
+    fruit: "Kiwi",
+    imageUrl:
+      "https://img.buzzfeed.com/buzzfeed-static/static/2015-03/6/14/enhanced/webdr06/enhanced-5904-1425669663-1.jpg?downsize=715:*&output-format=auto&output-quality=auto"
+  },
+  {
     id: 2,
     fruit: "Apples",
     imageUrl:
@@ -63,13 +75,32 @@ const fruitFilter = (item, inputValue) => {
 };
 
 class FruitTypeahead extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      selectedFruit: []
+    };
+  }
+
+  handleSelected = selectedFruit => {
+    this.setState({
+      selectedFruit
+    });
+  };
+
   render() {
+    const { selectedFruit } = this.state;
+
     return (
       <div>
-        <h4>Fruit Typeahead</h4>
+        <h4>Fruit Typeahead - {selectedFruit.length} Fruits Selected</h4>
         <MultiselectTypeahead
           filter={fruitFilter}
           items={items}
+          selected={selectedFruit}
+          onSelected={this.handleSelected}
+          label="Fruits"
           ItemRenderer={ItemRenderer}
           displayField="fruit"
         />

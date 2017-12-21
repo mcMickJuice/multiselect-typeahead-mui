@@ -53,14 +53,13 @@ class MultiselectTypeahead extends Component {
     super();
 
     this.turnOffSelected = [];
-
     this.state = {
-      selected: []
+      isInputFocused: false
     };
   }
 
   onChange = e => {
-    const { selected } = this.state;
+    const { selected, onSelected } = this.props;
     let newSelected;
     if (selected.indexOf(e) > -1) {
       newSelected = selected.filter(s => s.id !== e.id);
@@ -68,40 +67,32 @@ class MultiselectTypeahead extends Component {
       newSelected = [...selected, e];
     }
 
-    this.setState(
-      {
-        selected: newSelected
-      },
-      () => {
-        this.input.focus();
-      }
-    );
+    onSelected(newSelected);
+    this.input.focus();
   };
 
-  onRemoveSelected = itemToRemove => {
-    const { selected } = this.state;
-    const newSelected = selected.filter(item => item.id !== itemToRemove.id);
-
+  onInputFocus = () => {
     this.setState({
-      selected: newSelected
+      isInputFocused: true
     });
   };
 
-  onRemoveAllSelected = () => {
-    this.setState(
-      {
-        selected: [],
-        isMenuOpen: false
-      },
-      () => {
-        this.input.focus();
-      }
-    );
+  onInputBlur = () => {
+    this.setState({
+      isInputFocused: false
+    });
   };
 
   render() {
-    const { classes, items, ItemRenderer, filter } = this.props;
-    const { selected } = this.state;
+    const {
+      classes,
+      items,
+      ItemRenderer,
+      filter,
+      selected,
+      label
+    } = this.props;
+    const { isInputFocused } = this.state;
 
     return (
       <Downshift
@@ -123,8 +114,14 @@ class MultiselectTypeahead extends Component {
               <div className={classes.inputContainer}>
                 <TextField
                   inputRef={input => (this.input = input)}
+                  InputLabelProps={{
+                    shrink: isInputFocused || selected.length > 0
+                  }}
                   {...getInputProps({
                     placeholder: `${selected.length} Items Selected`,
+                    onBlur: this.onInputBlur,
+                    onFocus: this.onInputFocus,
+                    label,
                     InputProps: {
                       classes: {
                         input: classes.input
@@ -167,9 +164,12 @@ class MultiselectTypeahead extends Component {
 
 MultiselectTypeahead.propTypes = {
   items: PropTypes.array.isRequired,
+  selected: PropTypes.array.isRequired,
+  onSelected: PropTypes.func.isRequired,
   ItemRenderer: PropTypes.func,
   filter: PropTypes.func.isRequired,
-  displayField: PropTypes.string.isRequired
+  displayField: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired
 };
 
 MultiselectTypeahead.defaultProps = {
