@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import FruitSelect from './FruitSelect'
-import FruitMultiselect from './FruitMultiselect'
+import {ScrollableSection} from './pages'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {createMuiTheme} from 'material-ui/styles';
 import purple from 'material-ui/colors/purple';
@@ -20,10 +19,7 @@ const theme = createMuiTheme({
 const App = () => (
   <MuiThemeProvider theme={theme}>
   <div>
-    <FruitSelect />
-  </div>
-  <div>
-    <FruitMultiselect />
+    <ScrollableSection />
   </div>
   </MuiThemeProvider>
 );

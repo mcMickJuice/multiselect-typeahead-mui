@@ -78,12 +78,15 @@ export class TypeaheadSelect extends Component {
                       input: classes.input
                     }
                   }
-                }) }
+                })}
               />
 
               <div className={classes.listContainer}>
                 {!isOpen ? null : (
-                  <DropdownList data-test-id="dropdown-list">
+                  <DropdownList
+                    data-test-id="dropdown-list"
+                    inputElement={this.input}
+                  >
                     {items
                       .filter(item => filter(item, inputValue))
                       .map((item, index) => {
@@ -99,7 +102,7 @@ export class TypeaheadSelect extends Component {
                             isHighlighted={isHighlighted}
                             {...getItemProps({
                               item
-                            }) }
+                            })}
                           />
                         )
                       })}
