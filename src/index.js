@@ -9,11 +9,11 @@ import green from 'material-ui/colors/green';
 const theme = createMuiTheme({
   palette: {
     primary: purple,
-    secondary: green,
+    secondary: green
   },
   status: {
-    danger: 'orange',
-  },
+    danger: "orange"
+  }
 });
 
 const App = () => (
@@ -24,4 +24,4 @@ const App = () => (
   </MuiThemeProvider>
 );
 
-render(<App />, document.getElementById('root'));
+render(<App />, document.getElementById("root"));
